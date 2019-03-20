@@ -32,9 +32,9 @@ class TestConfig:
   def cacert(self):
     return self.common['crypto']['cacert']
 
-  def crypto_package(self):
-    sys.path.insert(0, self.common['crypto']['package'])
-    return __import__('crypto')
+#  def crypto_package(self):
+#    sys.path.insert(0, self.common['crypto']['package'])
+#    return __import__('crypto')
 
   # Data specific config
   def license(self):

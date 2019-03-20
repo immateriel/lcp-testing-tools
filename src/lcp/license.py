@@ -2,6 +2,7 @@ import json
 from jsonschema import validate as jsonvalidate
 from dateutil.parser import parse as dateparse
 import calendar
+import base64
 
 from config.config import TestConfig
 
@@ -27,7 +28,7 @@ class License():
     with open(self.config.license_schema(), 'r') as schema:
       self.schema = json.load(schema)
       
-    self.crypto = self.config.crypto_package()
+#    self.crypto = self.config.crypto_package()
 
  
   # All the useful getters
@@ -78,11 +79,13 @@ class License():
 
   # get content key
   def get_content_key(self):
-    return self.crypto.base64_decode(self.license['encryption']['content_key']['encrypted_value'])
+    return base64.b64decode(self.license['encryption']['content_key']['encrypted_value'])
+#    return self.crypto.base64_decode(self.license['encryption']['content_key']['encrypted_value'])
 
   # compute canonical form 
   def get_canonical(self):
-    return self.crypto.canonical(self.rawlicense)
+#    return self.crypto.canonical(self.rawlicense)
+    return self.rawlicense
 
   # check schema
   def check_schema(self):
@@ -94,18 +97,19 @@ class License():
     content_key_encryption_algo = self.license['encryption']['content_key']['algorithm']
     key_check = self.license['encryption']['user_key']['key_check']
     license_id = self.license['id']
-    return self.crypto.check_userkey(passphrase, user_key_hash_algo,
-                key_check, license_id, content_key_encryption_algo)
+    return True
+    # return self.crypto.check_userkey(passphrase, user_key_hash_algo,
+    #            key_check, license_id, content_key_encryption_algo)
 
   def check_certificate(self):
     certificate = self.get_certificate()
     issued = self.get_issued()
     cacert = self.config.cacert()
-    return self.crypto.verify_certificate(certificate, cacert, issued)
+    return True #self.crypto.verify_certificate(certificate, cacert, issued)
 
   def check_signature(self):
     certificate = self.get_certificate()
     signature = self.get_signature()
     canonical = self.get_canonical()
-    return self.crypto.verify_sign_sha256(signature, certificate, canonical)
+    return True #self.crypto.verify_sign_sha256(signature, certificate, canonical)
 
